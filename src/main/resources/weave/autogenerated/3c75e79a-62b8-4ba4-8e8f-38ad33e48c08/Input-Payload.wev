@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_3c75e79a_62b8_4ba4_8e8f_38ad33e48c08_Input_Payload = {
+  replies: Array<{    message: String,     _?: Any  } {"label": "Finance Response",
+  "description": "Data of Finance in Olympus Community"}>, 
+  _?: Any
+} {"label": "Finance Response",
+"description": "Data of Finance in Olympus Community"}
+

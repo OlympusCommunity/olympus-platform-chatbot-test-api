@@ -53,9 +53,9 @@ output application/java
       </ee:message>
     </ee:transform>
     <flow-ref
-      doc:name="implementation-finance-init-process-choice-option-flow"
+      doc:name="implementation-chatbot-process-subflow"
       doc:id="afe7614f-c1cc-4fe0-a6ca-177e0058a527"
-      name="implementation-finance-init-process-choice-option-flow" />
+      name="implementation-chatbot-process-subflow" />
     <error-handler ref="Global_Error_Handler" />
   </flow>
 </mule>

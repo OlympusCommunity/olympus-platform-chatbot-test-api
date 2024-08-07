@@ -1,0 +1,19 @@
+apiConfig:
+  prototl: "HTTP"
+  basePath: "/finance/v1/"
+  configPath: "/services"
+  port: "9091"
+  
+mongo:
+  host: "localhost"
+  port: "27017"
+  database: "soho_marketplace"
+  connectionStrings: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.database}?retryWrites=true&w=majority&appName=OlympusPlatformCluster1
+
+external:
+  host-client: mocki.io
+  port: "443"
+  basePath: "/v1"
+  path: "02cef866-c0b0-4158-9072-f526f2df01a2"
+  
+autoDiscoveryId: "19770728"

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+  <flow
+    name="implementation-finance-init-process-choice-option-flow"
+    doc:id="3c75e79a-62b8-4ba4-8e8f-38ad33e48c08">
+    <choice
+      doc:name="what is the option?"
+      doc:id="b54742ea-6465-4896-b9de-665e0de1fa8a">
+      <when expression="#[null == payload.query.message]">
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="108b3859-cc8d-41f0-9fcd-a8220ff59231"
+          message="Empty Message" />
+        <ee:transform
+          doc:name="Transform Message"
+          doc:id="046b48c0-d57a-49ad-85bb-63c9716761a4">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replies: [
+		{
+			message: "No has proporcionado ningun comando o mensaje para obtener respuestas"
+		}
+	]
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+      </when>
+      <when expression="#[null == payload.query.message]">
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="9f401791-1b46-48d0-8ba4-6ac0a186f4ca" />
+      </when>
+      <when expression="#[null == payload.query.message]">
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="e6a5e847-e4be-4fbd-ad39-68cfff5fb506" />
+      </when>
+      <when expression="#[null == payload.query.message]">
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="87bf90fe-9ab3-4a77-bd98-3fdf4fc2e63e" />
+      </when>
+      <when expression="#[null == payload.query.message]">
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="257c8afd-590c-4586-981b-c7d9e49e0f16" />
+      </when>
+      <otherwise>
+        <logger
+          level="INFO"
+          doc:name="Logger"
+          doc:id="7788cc23-14aa-44e3-a282-b43049d010ca" />
+      </otherwise>
+    </choice>
+  </flow>
+</mule>

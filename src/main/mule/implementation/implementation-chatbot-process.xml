@@ -3,5 +3,29 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<sub-flow name="implementation-chatbot-process-subflow" doc:id="6a0af12c-9801-4377-869b-9e2ef00ff261" />
+	<sub-flow name="implementation-chatbot-process-subflow" doc:id="6a0af12c-9801-4377-869b-9e2ef00ff261" >
+    <choice doc:name="Choice options" doc:id="95676377-870f-49d9-9780-6d2dfd9b7869" >
+      <when expression="#[Mule::p('financeCommands.start') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="0b03b1e5-32e5-478b-a2a8-0a70ec0cfafe" />
+      </when>
+      <when expression="#[Mule::p('financeCommands.menu') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="7a4cf031-d921-49b6-8f1c-ad4b8e7964bd" />
+      </when>
+      <when expression="#[Mule::p('financeCommands.register') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="2c6e251f-8dfd-4e2c-98ad-414c0f88cd50" />
+      </when>
+      <when expression="#[Mule::p('financeCommands.update') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="851af85c-244f-429b-a415-7ab5ec34c2c0" />
+      </when>
+      <when expression="#[Mule::p('financeCommands.balance') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="068093dd-ad3d-4a95-a34c-82fc7db7693d" />
+      </when>
+      <when expression="#[Mule::p('financeCommands.wallet') == vars.message]">
+        <logger level="INFO" doc:name="Logger" doc:id="2369ffc7-02d4-47e9-a55d-6b72aa7e6ef0" />
+      </when>
+      <otherwise >
+        <logger level="INFO" doc:name="Logger" doc:id="38b023ff-c5ba-4f5c-aa6c-1f62fefc9fb8" />
+      </otherwise>
+    </choice>
+  </sub-flow>
 </mule>

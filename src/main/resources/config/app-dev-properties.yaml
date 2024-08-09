@@ -21,6 +21,7 @@ mongo:
         banks: "banks"
         reserve: "reserve"
         accounts: "accounts"
+        users: "users"
     chatbot: 
       name: "chatbot"
       connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
@@ -31,5 +32,14 @@ mongo:
       connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
       collections:
         users: "users"
+        
+financeCommands:
+  start: "START"
+  menu: "MENU"
+  register: "REGISTER"
+  update: "UPDATE"
+  balance: "BALANCE"
+  wallet: "WALLET"
+  
         
 #secure.key: P2@RGa+z$88ezN3w7O[71Q%i

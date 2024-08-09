@@ -5,19 +5,15 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-  <sub-flow name="sotre-data-mongo-db-banking-subflow" doc:id="851cd5ce-0ef5-4602-ae85-88a9ef200cc6" >
+  <sub-flow name="sotre-data-mongodb-get-user-by-sender-subflow" doc:id="851cd5ce-0ef5-4602-ae85-88a9ef200cc6" >
 		<ee:transform doc:name="Transform Message" doc:id="3b0f5172-1e3b-47e3-811e-59a1a20a0b4d" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="query" ><![CDATA[%dw 2.0
-output application/json
----
-{
-}]]></ee:set-variable>
+        <ee:set-variable resource="scripts/query/get-user-by-sender-query.dwl" variableName="query" />
 			</ee:variables>
 		</ee:transform>
-		<mongo:find-documents doc:name="Find documents" doc:id="df39c218-4498-4d83-9d6f-2fdd2539e180" config-ref="MongoDB_Config" collectionName="${mongo.databases.finance.collections.coins}" fields="#[vars.fields default {}]">
+		<mongo:find-documents doc:name="Find documents" doc:id="df39c218-4498-4d83-9d6f-2fdd2539e180" config-ref="MongoDB_Config" collectionName="${mongo.databases.finance.collections.users}" fields="#[vars.fields default {}]">
 			<mongo:query ><![CDATA[#[vars.query default []]]]></mongo:query>
 			<mongo:sort-by ><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
 		</mongo:find-documents>

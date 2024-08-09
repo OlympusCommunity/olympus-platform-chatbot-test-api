@@ -22,24 +22,15 @@ mongo:
         reserve: "reserve"
         accounts: "accounts"
         users: "users"
-    chatbot: 
-      name: "chatbot"
-      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
-      collections:
-        users: "users"
-    olympus: 
-      name: "olympus"
-      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
-      collections:
-        users: "users"
-        
+  
 financeCommands:
+  info: "INFO"
   start: "START"
   menu: "MENU"
   register: "REGISTER"
   update: "UPDATE"
   balance: "BALANCE"
   wallet: "WALLET"
-  
-        
+  accounts: "ACCOUNTS"
+
 #secure.key: P2@RGa+z$88ezN3w7O[71Q%i

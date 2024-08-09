@@ -77,9 +77,12 @@ output application/json
     <ee:transform doc:name="Final Message" doc:id="1015eec9-c286-4d86-adec-2bf9584b8ff7" >
       <ee:message >
         <ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
+	replies: [
+		message: {}
+	]
 }]]></ee:set-payload>
       </ee:message>
     </ee:transform>

@@ -7,15 +7,29 @@ apiConfig:
 autoDiscoveryId: "19770728" 
  
 mongo:
-  host: "localhost"
+  host: "olympusplatformcluster1.cggcwqu.mongodb.net"
   port: "27017"
-  database: "soho_marketplace"
-  connectionStrings: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.database}?retryWrites=true&w=majority&appName=OlympusPlatformCluster1
-
-external:
-  host-client: mocki.io
-  port: "443"
-  basePath: "/v1"
-  path: "02cef866-c0b0-4158-9072-f526f2df01a2"
-  
-#secure.key: <2@RGa+z$88ezN3w7O[71Q}i
+  cluster:
+    name: "OlympusPlatformCluster1"
+  databases:
+    finance: 
+      name: "finance"
+      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.finance.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
+      collections:
+        currency: "currency"
+        coins: "coins"
+        banks: "banks"
+        reserve: "reserve"
+        accounts: "accounts"
+    chatbot: 
+      name: "chatbot"
+      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
+      collections:
+        users: "users"
+    olympus: 
+      name: "olympus"
+      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.chatbot.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
+      collections:
+        users: "users"
+        
+#secure.key: P2@RGa+z$88ezN3w7O[71Q%i

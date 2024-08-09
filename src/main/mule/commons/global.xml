@@ -25,14 +25,14 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
     doc:name="Global Property"
     doc:id="12e2fcd8-7ce3-4684-9149-a25afa5a1614"
     name="env"
-    value="local" />
+    value="dev" />
   <global-property
     doc:name="Global Property"
     doc:id="dd875ca5-7506-477d-8430-06524d7b1648"
     name="secure.key"
-    value="]\}QwS:G9KAV'bJE15DWn+&amp;." />
+    value="P2@RGa+z$88ezN3w7O[71Q%i" />
   <mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="2f25a795-a46d-4aae-bb2f-1ca153b738ab" >
-    <mongo:connection database="#[vars.database]" username="${secure::username}" password="${secure::username}" serverAddresses="${mongodb.host}:${mongodb.port}" />
+    <mongo:connection database="#[vars.database]" username="${secure::username}" password="${secure::password}" serverAddresses="${mongodb.host}:${mongodb.port}" />
   </mongo:config>
   <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="4bc01969-c8d2-45b5-9c4a-759bd1389661" file="security/secure-${env}-properties.yaml" key="${secure.key}" >
     <secure-properties:encrypt algorithm="Blowfish" />

@@ -4,9 +4,9 @@ apiConfig:
   configPath: "/services"
   port: "9091"
   
-autoDiscoveryId: "19770728" 
+autoDiscoveryId: "19809696" 
  
-mongo:
+mongodb:
   host: "olympusplatformcluster1.cggcwqu.mongodb.net"
   port: "27017"
   cluster:
@@ -14,7 +14,7 @@ mongo:
   databases:
     finance: 
       name: "finance"
-      connectionString: mongodb+srv://${secure::mongo.username}:${secure::mongo.password}@${mongo.host}/${mongo.databases.finance.name}?retryWrites=true&w=majority&appName=${mongo.cluster.name}
+      connectionString: mongodb+srv://${secure::mongodb.username}:${secure::mongodb.password}@${mongodb.host}/${mongodb.databases.finance.name}?retryWrites=true&w=majority&appName=${mongodb.cluster.name}
       collections:
         currency: "currency"
         coins: "coins"

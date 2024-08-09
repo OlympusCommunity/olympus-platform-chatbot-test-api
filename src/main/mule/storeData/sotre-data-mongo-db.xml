@@ -1,35 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule
+  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-  <sub-flow name="sotre-data-mongodb-get-user-by-sender-subflow" doc:id="851cd5ce-0ef5-4602-ae85-88a9ef200cc6" >
-		<ee:transform doc:name="Transform Message" doc:id="3b0f5172-1e3b-47e3-811e-59a1a20a0b4d" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-        <ee:set-variable resource="scripts/query/get-user-by-sender-query.dwl" variableName="query" />
-			</ee:variables>
-		</ee:transform>
-		<mongo:find-documents doc:name="Find User" doc:id="df39c218-4498-4d83-9d6f-2fdd2539e180" config-ref="MongoDB_Config" collectionName="${mongo.databases.finance.collections.users}" fields="#[vars.fields default {}]">
-			<mongo:query ><![CDATA[#[vars.query default []]]]></mongo:query>
-			<mongo:sort-by ><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
-		</mongo:find-documents>
-    <set-variable value="#[payload[0]]" doc:name="Set User" doc:id="87cb8775-6433-4d05-a642-646d21faa412" variableName="user"/>
-	</sub-flow>
-  <sub-flow name="sotre-data-mongodb-get-message-info-unregister-subflow" doc:id="7b3d8b19-cf9d-48e6-b06d-71d28e97ba72" >
-    <ee:transform doc:name="Transform Message" doc:id="31b6d784-efa8-4c9c-a06a-e6a6968885a5">
-      <ee:message />
+  <sub-flow
+    name="sotre-data-mongodb-get-user-by-sender-subflow"
+    doc:id="851cd5ce-0ef5-4602-ae85-88a9ef200cc6">
+    <ee:transform
+      doc:name="Transform Message"
+      doc:id="3b0f5172-1e3b-47e3-811e-59a1a20a0b4d">
+      <ee:message>
+      </ee:message>
       <ee:variables>
-        <ee:set-variable resource="scripts/query/get-user-by-sender-query.dwl" variableName="query" />
+        <ee:set-variable
+          resource="scripts/query/get-user-by-sender-query.dwl"
+          variableName="query" />
       </ee:variables>
     </ee:transform>
-    <mongo:find-documents collectionName="${mongo.databases.finance.collections.messages}" fields="#[vars.fields default {}]" doc:name="Find Message" doc:id="1dc8dfc5-fea2-49bf-896b-2a21137c8733" config-ref="MongoDB_Config" >
-      <mongo:query ><![CDATA[#[vars.query default []]]]></mongo:query>
-      <mongo:sort-by ><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
+    <mongo:find-documents
+      doc:name="Find User"
+      doc:id="df39c218-4498-4d83-9d6f-2fdd2539e180"
+      config-ref="MongoDB_Config"
+      collectionName="${mongodb.databases.finance.collections.users}"
+      fields="#[vars.fields default {}]">
+      <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
+      <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
-    <set-variable value="#[payload[0].value]" doc:name="Set Message" doc:id="2ddd559f-5165-4a11-ae08-782b7b2c0283" variableName="message"/>
+    <set-variable
+      value="#[payload[0]]"
+      doc:name="Set User"
+      doc:id="87cb8775-6433-4d05-a642-646d21faa412"
+      variableName="user" />
+  </sub-flow>
+  <sub-flow
+    name="sotre-data-mongodb-get-message-info-unregister-subflow"
+    doc:id="7b3d8b19-cf9d-48e6-b06d-71d28e97ba72">
+    <ee:transform
+      doc:name="Transform Message"
+      doc:id="31b6d784-efa8-4c9c-a06a-e6a6968885a5">
+      <ee:message />
+      <ee:variables>
+        <ee:set-variable
+          resource="scripts/query/get-user-by-sender-query.dwl"
+          variableName="query" />
+      </ee:variables>
+    </ee:transform>
+    <mongo:find-documents
+      collectionName="${mongodb.databases.finance.collections.messages}"
+      fields="#[vars.fields default {}]"
+      doc:name="Find Message"
+      doc:id="1dc8dfc5-fea2-49bf-896b-2a21137c8733"
+      config-ref="MongoDB_Config">
+      <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
+      <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
+    </mongo:find-documents>
+    <set-variable
+      value="#[payload[0].value]"
+      doc:name="Set Message"
+      doc:id="2ddd559f-5165-4a11-ae08-782b7b2c0283"
+      variableName="message" />
   </sub-flow>
 </mule>

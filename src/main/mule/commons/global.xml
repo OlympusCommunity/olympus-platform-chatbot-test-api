@@ -6,7 +6,9 @@
   xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
   xmlns:http="http://www.mulesoft.org/schema/mule/http"
   xmlns="http://www.mulesoft.org/schema/mule/core"
-  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
@@ -30,11 +32,20 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
     doc:name="Global Property"
     doc:id="dd875ca5-7506-477d-8430-06524d7b1648"
     name="secure.key"
-    value="P2@RGa+z$88ezN3w7O[71Q%i" />
-  <mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="2f25a795-a46d-4aae-bb2f-1ca153b738ab" >
-    <mongo:connection database="#[vars.database]" username="${secure::username}" password="${secure::password}" serverAddresses="${mongodb.host}:${mongodb.port}" />
+    value="ayYOjFb1bcmIoJ5C6wSigC1X0yBR1MTGAHRr" />
+  <mongo:config
+    name="MongoDB_Config"
+    doc:name="MongoDB Config"
+    doc:id="2f25a795-a46d-4aae-bb2f-1ca153b738ab">
+    <mongo:connection-string-connection connectionString="${mongodb.databases.finance.connectionString}" />
   </mongo:config>
-  <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="4bc01969-c8d2-45b5-9c4a-759bd1389661" file="security/secure-${env}-properties.yaml" key="${secure.key}" >
+  <secure-properties:config
+    name="Secure_Properties_Config"
+    doc:name="Secure Properties Config"
+    doc:id="4bc01969-c8d2-45b5-9c4a-759bd1389661"
+    file="security\secure-${env}-properties.yaml"
+    key="${secure.key}">
     <secure-properties:encrypt algorithm="Blowfish" />
   </secure-properties:config>
+  <configuration-properties doc:name="Configuration properties" doc:id="50db19ed-a70e-4806-8735-b9b35cb27eb5" file="config\app-${env}-properties.yaml" />
 </mule>

@@ -41,17 +41,19 @@
     <logger
       level="INFO"
       message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	endpoint: "post:\finance:application\json:olympus-platform-chatbot-test-api-specs-config",&#10;	data: payload&#10;}]' />
-    <ee:transform doc:name="Request Body" doc:id="b483f4c4-bc5c-4f09-bb77-ef69d96f6333" >
-      <ee:message >
+    <ee:transform
+      doc:name="Request Body"
+      doc:id="b483f4c4-bc5c-4f09-bb77-ef69d96f6333">
+      <ee:message>
       </ee:message>
-      <ee:variables >
-        <ee:set-variable variableName="request" ><![CDATA[%dw 2.0
+      <ee:variables>
+        <ee:set-variable variableName="request"><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	userData: payload.query
 }]]></ee:set-variable>
-        <ee:set-variable variableName="audits" ><![CDATA[%dw 2.0
+        <ee:set-variable variableName="audits"><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -67,25 +69,13 @@ output application/json
 		isGroup: payload.query.isGroup
 	}
 }]]></ee:set-variable>
-        <ee:set-variable variableName="message" ><![CDATA[upper((payload.query.message splitBy (" "))[1])]]></ee:set-variable>
+        <ee:set-variable variableName="message"><![CDATA[upper((payload.query.message splitBy (" "))[1])]]></ee:set-variable>
       </ee:variables>
     </ee:transform>
     <flow-ref
       doc:name="implementation-chatbot-process-subflow"
       doc:id="afe7614f-c1cc-4fe0-a6ca-177e0058a527"
       name="implementation-chatbot-process-subflow" />
-    <ee:transform doc:name="Final Message" doc:id="1015eec9-c286-4d86-adec-2bf9584b8ff7" >
-      <ee:message >
-        <ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	replies: [
-		message: {}
-	]
-}]]></ee:set-payload>
-      </ee:message>
-    </ee:transform>
     <error-handler ref="Global_Error_Handler" />
   </flow>
 </mule>

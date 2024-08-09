@@ -7,6 +7,12 @@
     <choice doc:name="Bot Options" doc:id="95676377-870f-49d9-9780-6d2dfd9b7869" >
       <when expression="#[Mule::p('financeCommands.info') == vars.message]">
         <logger level="INFO" doc:name="Info Logger" doc:id="0b03b1e5-32e5-478b-a2a8-0a70ec0cfafe" message="Info command was executed"/>
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="10214fdb-4bc6-493c-98d3-3fd755618f0d" name="sotre-data-mongodb-get-user-by-sender-subflow"/>
+        <choice doc:name="Existing User?" doc:id="98a2ce85-7140-46e6-9cff-710a5cf28713" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]">
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="cd6b6b33-b0d5-4cae-bf93-2a4abe806513" name="sotre-data-mongodb-get-message-info-unregister-subflow"/>
+          </when>
+        </choice>
       </when>
       <when expression="#[Mule::p('financeCommands.start') == vars.message]">
         <logger level="INFO" doc:name="Start Logger" doc:id="7a4cf031-d921-49b6-8f1c-ad4b8e7964bd" message="Start command was executed"/>

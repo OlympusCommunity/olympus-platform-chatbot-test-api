@@ -23,6 +23,7 @@ mongodb:
         accounts: "accounts"
         users: "users"
         messages: "messages"
+        wallet: "wallet"
   
 financeCommands:
   info: "INFO"
@@ -33,5 +34,6 @@ financeCommands:
   balance: "BALANCE"
   wallet: "WALLET"
   accounts: "ACCOUNTS"
+  banks: "BANKS"
 
 #secure.key: P2@RGa+z$88ezN3w7O[71Q%i

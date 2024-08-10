@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <choice
       doc:name="Bot Options"
       doc:id="95676377-870f-49d9-9780-6d2dfd9b7869">
-      <when expression="#[Mule::p('financeCommands.info') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.info') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Info Logger"
@@ -31,63 +31,229 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
               doc:name="get-message-info-unregister-subflow"
               doc:id="cd6b6b33-b0d5-4cae-bf93-2a4abe806513"
               name="sotre-data-mongodb-get-message-info-unregister-subflow" />
-            <ee:transform doc:name="Transform Message" doc:id="6c867990-1fd3-4205-9574-f75679e9f048" >
-              <ee:message >
-                <ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	replies: [
-		message: vars.message
-	]
-}]]></ee:set-payload>
-              </ee:message>
-            </ee:transform>
           </when>
+          <otherwise >
+            <flow-ref doc:name="get-message-info-subflow" doc:id="3da7814f-ef09-4e28-9ea4-8b6dbd5cb472" name="sotre-data-mongodb-get-message-info-subflow"/>
+          </otherwise>
         </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.start') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.start') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Start Logger"
           doc:id="7a4cf031-d921-49b6-8f1c-ad4b8e7964bd"
           message="Start command was executed" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="4b7e6def-9751-407f-af9f-cf8bff9ebaf8" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="a4cb934e-c261-47e8-845e-77023ed4cc7b" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="38834c04-a21b-4242-a396-cb1485ea0aab" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.menu') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.menu') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Logger"
           doc:id="2c6e251f-8dfd-4e2c-98ad-414c0f88cd50" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="a7ffa616-acaf-4448-bb2c-48feaedec6ce" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="35ff62cc-6a5d-4373-b284-bc90b28afb12" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="1bff3661-3f66-449a-80e5-e533bea3acc4" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.register') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.register') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Logger"
-          doc:id="851af85c-244f-429b-a415-7ab5ec34c2c0" />
+          doc:id="851af85c-244f-429b-a415-7ab5ec34c2c0" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	info: "Inicio de registro de datos",&#10;	data: vars.request,&#10;	command: vars.message.command&#10;}]'/>
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="2640e8b5-32e3-4020-8cd2-e37aa4fcdc0c" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="0421f6e8-19c2-4d34-b8c3-741175037233" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <choice doc:name="User Data exists?" doc:id="31615ca7-72de-41f7-8d48-81353e6c42e4">
+              <when expression="#[isEmpty(vars.message.userData) or null == vars.message.userData]">
+                <ee:transform doc:name="Info Register" doc:id="4a011ec4-cb88-422f-9015-debe245b28bc">
+              <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replies: [
+		{
+			message: "Para continuar, realiza el registro con el comando /finance register y seguido de sus datos en el formato
+NOMBRE|EDAD|OCUPACION|NUMERO DE WHATSAPP, a continuacion, le compartimos un breve ejemplo."
+		},
+		{
+			message: "/finance register JohnDoe|26|Arquitecto|+51955715506"
+		},
+		{
+			message: "Recuerde que el nombre, edad y WhatsApp, son datos obligatorios, no use espacios en blanco por favor. 
+Use letras mayusculas juntas para diferenciar el nombre del apellido si desea ingresar 2 nombres.
+
+En caso de que no desee ingresar su ocupacion, mande las barras rectas sin nada entre ellas. Ejemplo: JohnDoe|26||+51955715506
+
+Si el registro le parece complicado, por favor ingrese con el comando: /finance unirse"
+		}
+	]
+}]]></ee:set-payload>
+              </ee:message>
+            </ee:transform>
+              </when>
+              <otherwise>
+                <choice doc:name="Valid User Data" doc:id="78719a7c-22d5-4955-810a-c53a72a89cb4" >
+                  <when expression='#[(&#10;	sizeOf(vars.message.userData splitBy  ("|")) == 0&#10;)&#10;or&#10;(&#10;	isEmpty((vars.message.userData splitBy  ("|"))[0]) or null == (vars.message.userData splitBy  ("|"))[0]&#10;)&#10;or&#10;(&#10;	isEmpty((vars.message.userData splitBy  ("|"))[1]) or null == (vars.message.userData splitBy  ("|"))[1]&#10;)&#10;or&#10;(&#10;	isEmpty((vars.message.userData splitBy  ("|"))[2]) or null == (vars.message.userData splitBy  ("|"))[2]&#10;)&#10;or&#10;(&#10;	isEmpty((vars.message.userData splitBy  ("|"))[3]) or null == (vars.message.userData splitBy  ("|"))[3]&#10;)]'>
+                    <ee:transform doc:name="Validation Errors Message" doc:id="8ba14c82-481e-4a9a-9379-296731ebe388" >
+                      <ee:message >
+                        <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replies: [
+		{
+			message: "Error de formato para registrarte en las finanzas de Olympus, utiliza el siguiente ejemplo usando sus datos. por favor: "
+		},
+		{
+			message: "/finance register JohnDoe|26|Arquitecto|+51955715506"
+		},
+		{
+			message: "Recuerde que el nombre, edad y WhatsApp, son datos obligatorios, no use espacios en blanco por favor. 
+Use letras mayusculas juntas para diferenciar el nombre del apellido si desea ingresar 2 nombres.
+
+En caso de que no desee ingresar su ocupacion, mande las barras rectas sin nada entre ellas. Ejemplo: JohnDoe|26||+51955715506
+
+Si el registro le parece complicado, por favor ingrese con el comando: /finance unirse"
+		}
+	]
+}]]></ee:set-payload>
+                      </ee:message>
+                    </ee:transform>
+                  </when>
+                  <otherwise >
+                    <set-variable value="true" doc:name="Set Firts Register" doc:id="37c18a36-fcb8-4cfd-a86b-e14dd27fe44b" variableName="firtsRegister"/>
+                    <flow-ref doc:name="add-user-subflow" doc:id="ad369962-f11a-44bd-9a55-e271f445b8fa" name="sotre-data-mongodb-add-user-subflow" />
+                    <flow-ref doc:name="get-user-by-sender-subflow" doc:id="e650f025-527b-4027-8ad2-9235d6f45c54" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+                    <flow-ref doc:name="create-accounts-subflow" doc:id="66fdb874-cf92-4d3c-ac4e-f81b67edbb1c" name="sotre-data-mongodb-create-accounts-subflow"/>
+                    <async doc:name="Async" doc:id="d2e16f7b-b859-4789-b296-b6677fd7ccbe" >
+                      <flow-ref doc:name="reduce-money-in-banks-subflow" doc:id="9c786fd8-9c92-4255-9152-fd3bdc4fa613" name="sotre-data-mongodb-reduce-money-in-banks-subflow" />
+                    </async>
+                    <flow-ref doc:name="find-accounts-subflow" doc:id="ce12fa9e-8603-44b9-9858-2e03eb155add" name="sotre-data-mongodb-find-accounts-subflow"/>
+                    <flow-ref doc:name="create-wallet-subflow" doc:id="363b72d7-219c-4140-bc3f-cff84a2ca768" name="sotre-data-mongodb-create-wallet-subflow"/>
+                    <ee:transform doc:name="Final Message" doc:id="fac370f1-ad3a-4365-9e7b-892dc0a6c1c0">
+                      <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replies: [
+		{
+			message: "*OLYMPUS FINANCE* 💰
+_Registro, apertura y creacion de E-Wallet personal_
+
+Bienvenido a Olympus Finance, se ha creado su cuenta de forma exitosa, le damos la bienvenida al sistema financiero de Olympus."
+		},
+		{
+			message: "*OLYMPUS FINANCE* 🏦
+\n_Bienvenidos al apartado de finanzas oficial de Olympus_
+\n\n*DATOS PRINCIPALES* 👤s
+\nNombre: " ++ vars.user.name default "" ++
+"\nWhatsApp: " ++ vars.user.whatsapp default "" ++
+"\nOcupacion: " ++ vars.user.ocupation default "Sin especificar" ++
+"\n\n*E-WALLET BALANCE* 💰
+\n0 Coins"
+		}
+	]
+}]]></ee:set-payload>
+                      </ee:message>
+                    </ee:transform>
+                  </otherwise>
+                </choice>
+              </otherwise>
+            </choice>
+          </when>
+          <otherwise >
+            <ee:transform doc:name="User Registered" doc:id="37aeba2e-01d5-4c4a-bdbf-1856fea7eb22" >
+              <ee:message >
+                <ee:set-payload resource="scripts/messages/finance-unregister-message.dwl" />
+              </ee:message>
+            </ee:transform>
+          </otherwise>
+        </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.update') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.update') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Logger"
           doc:id="068093dd-ad3d-4a95-a34c-82fc7db7693d" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="9c0aaaef-2142-42f7-8f00-2ac023e87835" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="7d1b8eb3-c3df-4fb4-9399-33feaa0362c6" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="0f5c033b-15ca-4c7c-bcf7-80de4dcd61c0" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.balance') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.balance') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Logger"
           doc:id="2369ffc7-02d4-47e9-a55d-6b72aa7e6ef0" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="15bada06-aa0d-44c8-a8a0-a38d355f5223" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="ea3e2e3a-51d7-4621-9460-09c7acd7d029" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="85b8031b-bd7e-49b3-a732-2196eaaa1131" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
       </when>
-      <when expression="#[Mule::p('financeCommands.wallet') == vars.message]">
+      <when expression="#[Mule::p('financeCommands.wallet') == vars.message.command]">
         <logger
           level="INFO"
           doc:name="Logger"
           doc:id="cf55f009-36d9-4857-a022-7d0967acf5b2" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="602d7bb6-32d3-47bf-8f47-46c276f55fdf" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="39ba7765-84e9-45f4-ad99-5e094e20b516" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="18515edd-11c0-4142-8f29-0f3a2047488b" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
+      </when>
+      <when expression="#[Mule::p('financeCommands.wallet') == vars.message.command]">
+        <logger level="INFO" doc:name="Logger" doc:id="48e9772f-94ba-4eab-9f7b-84410f83c665" message="Create Wallet"/>
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="ed09d8d3-f1ee-402b-b0e0-5890134b6f22" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="16476018-922f-4db8-bf8a-bedacedc2dce" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="b8df17d3-ebd5-4700-8209-0704e58aea0c" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+        </choice>
       </when>
       <otherwise>
         <logger
           level="INFO"
           doc:name="Logger"
           doc:id="38b023ff-c5ba-4f5c-aa6c-1f62fefc9fb8" />
+        <flow-ref doc:name="get-user-by-sender-subflow" doc:id="151e5620-40c7-4449-9b11-58b26e9ba0b7" name="sotre-data-mongodb-get-user-by-sender-subflow" />
+        <choice doc:name="Existing User?" doc:id="d1fe310f-255b-4f9f-90cd-6259ba86236e" >
+          <when expression="#[isEmpty(vars.user) or null == vars.user]" >
+            <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="92127728-5dd3-41a3-8fa2-7642e101b7d2" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+          </when>
+          <otherwise >
+            <ee:transform doc:name="Command incorrect Message" doc:id="aa504cbe-4f79-4c23-9af0-1d98eb56dcaa">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replies: [
+		{
+			message: "*INFORMACION* Bienvenido a las finanzas en Olympus"
+		},
+		{
+			message: "El comando " ++ vars.message as String default null ++ " no existe en este bot."
+		}
+	]
+}]]></ee:set-payload>
+          </ee:message>
+        </ee:transform>
+          </otherwise>
+        </choice>
       </otherwise>
     </choice>
   </sub-flow>

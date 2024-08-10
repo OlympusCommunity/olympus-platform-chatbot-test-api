@@ -2,6 +2,5 @@
 output application/json
 ---
 {
-	code: Mule::p('financeCommands.info'), 
-	validations: ["unregister"]
+	sender: vars.request.initQuery.sender
 }

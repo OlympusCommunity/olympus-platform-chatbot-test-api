@@ -46,9 +46,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       doc:id="31b6d784-efa8-4c9c-a06a-e6a6968885a5">
       <ee:message />
       <ee:variables>
-        <ee:set-variable
-          resource="scripts/query/get-user-by-sender-query.dwl"
-          variableName="query" />
+        <ee:set-variable resource="scripts/query/get-message-info-unregister-query.dwl" variableName="query" />
       </ee:variables>
     </ee:transform>
     <mongo:find-documents
@@ -60,10 +58,116 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
       <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
-    <set-variable
-      value="#[payload[0].value]"
-      doc:name="Set Message"
-      doc:id="2ddd559f-5165-4a11-ae08-782b7b2c0283"
-      variableName="message" />
+    <set-payload value="#[payload[0].replies]" doc:name="Set Payload" doc:id="18b9dfda-c9b1-475d-88ac-5d25a579d0b0" />
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-get-message-info-subflow" doc:id="8a78df15-b195-4f07-927f-60cc1384f54f">
+    <ee:transform doc:name="Transform Message" doc:id="8b772235-f05f-40da-9763-d914b5e836d5">
+      <ee:message />
+      <ee:variables>
+        <ee:set-variable resource="scripts/query/get-message-info-unregister-query.dwl" variableName="query" />
+      </ee:variables>
+    </ee:transform>
+    <mongo:find-documents collectionName="${mongodb.databases.finance.collections.messages}" fields="#[vars.fields default {}]" doc:name="Find Message" doc:id="1698b06b-6d21-4e2c-a0a9-00fb16e4dff2" config-ref="MongoDB_Config">
+      <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
+      <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
+    </mongo:find-documents>
+    <set-payload value="#[payload[0].replies]" doc:name="Set Payload" doc:id="87f156a1-16aa-4fac-9dcf-50c9d7e1a60c" />
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-add-user-subflow" doc:id="12e3e047-d216-41e1-89d0-b630b59f7ab5" >
+    <ee:transform doc:name="Transform Message" doc:id="428eb969-7f3b-4913-9ca8-9dd2d66bc94f" >
+      <ee:message >
+      </ee:message>
+      <ee:variables >
+        <ee:set-variable resource="scripts/messages/finance-user-register-message.dwl" variableName="query" />
+      </ee:variables>
+    </ee:transform>
+    <mongo:insert-document doc:name="Insert User" doc:id="6564906e-882c-45d7-ae90-c72daae6c751" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.users}">
+      <mongo:document ><![CDATA[#[vars.query default []]]]></mongo:document>
+    </mongo:insert-document>
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-create-accounts-subflow" doc:id="c0230198-47f1-4428-946f-4084f915dc5a">
+    <ee:transform doc:name="Transform Message" doc:id="2efb562c-76cb-4276-ab14-668bbcb2760d" >
+      <ee:message >
+      </ee:message>
+      <ee:variables >
+        <ee:set-variable resource="scripts/query/create-user-accounts-query.dwl" variableName="accounts" />
+      </ee:variables>
+    </ee:transform>
+    <mongo:insert-documents doc:name="Insert Accounts" doc:id="517b28ed-1a91-4978-a741-87e464233e8c" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.accounts}">
+      <mongo:documents ><![CDATA[#[vars.accounts default []]]]></mongo:documents>
+    </mongo:insert-documents>
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-find-accounts-subflow" doc:id="393b4d5d-62a4-4e0b-8162-b46e73e35c8d" >
+    <ee:transform doc:name="Transform Message" doc:id="5a95b750-0981-4b3a-937b-1c1318446589" >
+      <ee:message >
+      </ee:message>
+      <ee:variables >
+        <ee:set-variable variableName="query" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	userId: vars.user."_id"."\$oid"
+}]]></ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+    <mongo:find-documents fields="#[vars.fields default {}]" doc:name="Find documents" doc:id="192f2743-b86f-4e91-a335-942d5d4f2487" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.accounts}">
+      <mongo:query ><![CDATA[#[vars.query default []]]]></mongo:query>
+      <mongo:sort-by ><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
+    </mongo:find-documents>
+    <set-variable value="#[payload]" doc:name="Set Accounts Found" doc:id="dca9f50d-6d95-41ea-bdb1-5734abcbffff" variableName="accountsFound"/>
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-reduce-money-in-banks-subflow" doc:id="2183e6dd-d141-453d-a29d-a9acb2f3c09b">
+    <foreach doc:name="Accounts - For Each" doc:id="0a863106-af42-4a9c-8590-d778a5c82d81" collection="#[vars.accounts default []]">
+      <set-variable value="#[payload]" doc:name="Set Account" doc:id="1a4423bc-c1fa-4742-9e55-7c700f4a7e58" variableName="account"/>
+      <foreach doc:name="Money - For Each" doc:id="85503054-e525-4bf4-b36a-6005174b95d4" collection="#[payload.money default []]">
+        <set-variable value="#[payload.currency]" doc:name="Set Currency" doc:id="f052c66d-1a79-4389-915f-228cf479b582" variableName="currency"/>
+        <ee:transform doc:name="Transform Message" doc:id="929772b4-b684-4548-8129-5c99c12bdd05">
+      <ee:message>
+      </ee:message>
+      <ee:variables>
+        <ee:set-variable variableName="query"><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"_id": {
+    	"\$oid": vars.account.bank_id
+  	}
+}]]></ee:set-variable>
+        <ee:set-variable variableName="contentToUpdate"><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "\$inc": {
+    "money.amount": -vars.currency.amount
+  }
+}]]></ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+        <mongo:update-documents doc:name="Update Amounts in Banks" doc:id="6f88fabd-0a85-4f97-b37d-cdd9e5d20d5e" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.banks}">
+      <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
+      <mongo:content-to-update><![CDATA[#[vars.contentToUpdate default []]]]></mongo:content-to-update>
+    </mongo:update-documents>
+      </foreach>
+    </foreach>
+  </sub-flow>
+  <sub-flow name="sotre-data-mongodb-create-wallet-subflow" doc:id="b894920b-58cd-44a1-886f-c89db2fb54a2" >
+    <ee:transform doc:name="Transform Message" doc:id="c50f0966-5936-4e31-b7bf-ea25759f3468">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  userId: vars.user."_id"."\$oid",
+  accounts: vars.accountsFound default [] map ((item, index) -> {
+  	accountId: item."_id"."\$oid"
+  }),
+  isBanned: false,
+  isActive: true
+}]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+    <mongo:insert-document collectionName="${mongodb.databases.finance.collections.wallet}" doc:name="Insert Wallet" doc:id="6acf3278-78c6-474d-a60f-e4732a8b189f" config-ref="MongoDB_Config" >
+      <mongo:document ><![CDATA[#[vars.query default []]]]></mongo:document>
+    </mongo:insert-document>
   </sub-flow>
 </mule>

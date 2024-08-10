@@ -51,7 +51,7 @@
 output application/json
 ---
 {
-	userData: payload.query
+	initQuery: payload.query
 }]]></ee:set-variable>
         <ee:set-variable variableName="audits"><![CDATA[%dw 2.0
 output application/json
@@ -69,7 +69,26 @@ output application/json
 		isGroup: payload.query.isGroup
 	}
 }]]></ee:set-variable>
-        <ee:set-variable variableName="message"><![CDATA[upper((payload.query.message splitBy (" "))[1])]]></ee:set-variable>
+        <ee:set-variable variableName="message"><![CDATA[%dw 2.0
+output application/json
+var message = payload.query.message as String default ""
+---
+if ( sizeOf(message splitBy (" ")) <= 2)
+	(
+		{
+			command: upper((message splitBy (" "))[1]),
+            total: sizeOf(message splitBy (" "))
+		}
+	)
+else 
+	(
+		{
+			command: upper((message splitBy (" "))[1]),
+			userData: upper((message splitBy (" "))[2]),
+            total: sizeOf(message splitBy (" "))
+		}
+	)
+]]></ee:set-variable>
       </ee:variables>
     </ee:transform>
     <flow-ref

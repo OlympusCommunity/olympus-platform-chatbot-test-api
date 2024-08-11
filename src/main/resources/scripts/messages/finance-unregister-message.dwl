@@ -1,10 +1,13 @@
 %dw 2.0
-output application/java
+output application/json
 ---
 {
 	replies: [
 		{
-			message: vars.messageValue
+			message: "Usted ya se encuentra registrado en el motor de finanzas de Olympus."
+		},
+		{
+			message: "Su nombre/nickname es: " ++ vars.user.name as String default null
 		}
 	]
 }

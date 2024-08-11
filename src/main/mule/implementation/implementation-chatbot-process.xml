@@ -31,9 +31,29 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
               doc:name="get-message-info-unregister-subflow"
               doc:id="cd6b6b33-b0d5-4cae-bf93-2a4abe806513"
               name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+            <ee:transform doc:name="Response Message" doc:id="53275747-bd06-47d7-bd0e-ffab126ea030" >
+              <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	replies: payload
+}]]></ee:set-payload>
+              </ee:message>
+            </ee:transform>
           </when>
           <otherwise >
             <flow-ref doc:name="get-message-info-subflow" doc:id="3da7814f-ef09-4e28-9ea4-8b6dbd5cb472" name="sotre-data-mongodb-get-message-info-subflow"/>
+            <ee:transform doc:name="Response Message" doc:id="59047622-fe14-47b6-b89f-bfcad0a2d38b" >
+              <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	replies: payload
+}]]></ee:set-payload>
+              </ee:message>
+            </ee:transform>
           </otherwise>
         </choice>
       </when>
@@ -47,6 +67,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <choice doc:name="Existing User?" doc:id="a4cb934e-c261-47e8-845e-77023ed4cc7b" >
           <when expression="#[isEmpty(vars.user) or null == vars.user]" >
             <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="38834c04-a21b-4242-a396-cb1485ea0aab" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
+            <ee:transform doc:name="Response Message" doc:id="21b6385e-fde1-4cf9-97fc-a6588b0bec69" >
+              <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	replies: payload
+}]]></ee:set-payload>
+              </ee:message>
+            </ee:transform>
           </when>
         </choice>
       </when>

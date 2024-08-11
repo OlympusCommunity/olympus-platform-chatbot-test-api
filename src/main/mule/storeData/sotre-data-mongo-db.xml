@@ -58,20 +58,19 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
       <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
-    <set-payload value="#[payload[0].replies]" doc:name="Set Payload" doc:id="18b9dfda-c9b1-475d-88ac-5d25a579d0b0" />
+    <set-payload value="#[payload[0].values]" doc:name="Set Payload" doc:id="18b9dfda-c9b1-475d-88ac-5d25a579d0b0" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-get-message-info-subflow" doc:id="8a78df15-b195-4f07-927f-60cc1384f54f">
-    <ee:transform doc:name="Transform Message" doc:id="8b772235-f05f-40da-9763-d914b5e836d5">
-      <ee:message />
-      <ee:variables>
-        <ee:set-variable resource="scripts/query/get-message-info-unregister-query.dwl" variableName="query" />
-      </ee:variables>
+    <ee:transform doc:name="Transform Message" doc:id="bee8c800-ce55-4d02-8686-3fdea6cebd42" >
+      <ee:message >
+        <ee:set-payload resource="scripts/query/get-message-info-register-query.dwl" />
+      </ee:message>
     </ee:transform>
     <mongo:find-documents collectionName="${mongodb.databases.finance.collections.messages}" fields="#[vars.fields default {}]" doc:name="Find Message" doc:id="1698b06b-6d21-4e2c-a0a9-00fb16e4dff2" config-ref="MongoDB_Config">
       <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
       <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
-    <set-payload value="#[payload[0].replies]" doc:name="Set Payload" doc:id="87f156a1-16aa-4fac-9dcf-50c9d7e1a60c" />
+    <set-payload value="#[payload[0].values]" doc:name="Set Payload" doc:id="87f156a1-16aa-4fac-9dcf-50c9d7e1a60c" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-add-user-subflow" doc:id="12e3e047-d216-41e1-89d0-b630b59f7ab5" >
     <ee:transform doc:name="Transform Message" doc:id="428eb969-7f3b-4913-9ca8-9dd2d66bc94f" >

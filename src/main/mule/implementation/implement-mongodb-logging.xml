@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+  <sub-flow name="implement-mongodb-general-logging-subflow" doc:id="1cc04513-d4eb-49c6-81be-6bdcfaf3c6e2" >
+    <logger level="INFO" doc:name="Debug Logger" doc:id="2d9fe1f9-d6df-4622-80cd-f5ab7ad11578" message="#[vars.actionDb]"/>
+    <logger level="INFO" doc:name="Info DB Logger" doc:id="6e7769a6-fd05-4c55-a44b-c070a645330e" message='#[%dw 2.5&#10;output application/json&#10;---&#10;{&#10;	message: "DATABASE INFO LOGGER",&#10;	separator: "======================",&#10;	action: vars.actionDb default "",&#10;	data: payload default null&#10;}]'/>
+  </sub-flow>
+</mule>

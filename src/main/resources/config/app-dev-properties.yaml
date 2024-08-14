@@ -35,5 +35,15 @@ financeCommands:
   wallet: "WALLET"
   accounts: "ACCOUNTS"
   banks: "BANKS"
+  
+data:
+  banks:
+    binanceBankId: "66b56e2716cdca9bf0a11347"
+    olympusBankId: "66b56e2716cdca9bf0a11348"
+    zycryxBankId: "66b56e2716cdca9bf0a11349"
+  currency:
+    zyxcoinId: "66b55f4a16cdca9bf0a11339"
+    olycoinId: "66ba7ff3af669b15012e66cb"
+    coinId: "66b55f4a16cdca9bf0a11340"
 
 #secure.key: P2@RGa+z$88ezN3w7O[71Q%i

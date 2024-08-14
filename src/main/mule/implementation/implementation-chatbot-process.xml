@@ -34,7 +34,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             <ee:transform doc:name="Response Message" doc:id="53275747-bd06-47d7-bd0e-ffab126ea030" >
               <ee:message >
                 <ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
 	replies: payload
@@ -47,7 +47,7 @@ output application/java
             <ee:transform doc:name="Response Message" doc:id="59047622-fe14-47b6-b89f-bfcad0a2d38b" >
               <ee:message >
                 <ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
 	replies: payload
@@ -161,12 +161,7 @@ Si el registro le parece complicado, por favor ingrese con el comando: /finance 
                   <otherwise >
                     <set-variable value="true" doc:name="Set Firts Register" doc:id="37c18a36-fcb8-4cfd-a86b-e14dd27fe44b" variableName="firtsRegister"/>
                     <flow-ref doc:name="add-user-subflow" doc:id="ad369962-f11a-44bd-9a55-e271f445b8fa" name="sotre-data-mongodb-add-user-subflow" />
-                    <flow-ref doc:name="get-user-by-sender-subflow" doc:id="e650f025-527b-4027-8ad2-9235d6f45c54" name="sotre-data-mongodb-get-user-by-sender-subflow" />
                     <flow-ref doc:name="create-accounts-subflow" doc:id="66fdb874-cf92-4d3c-ac4e-f81b67edbb1c" name="sotre-data-mongodb-create-accounts-subflow"/>
-                    <async doc:name="Async" doc:id="d2e16f7b-b859-4789-b296-b6677fd7ccbe" >
-                      <flow-ref doc:name="reduce-money-in-banks-subflow" doc:id="9c786fd8-9c92-4255-9152-fd3bdc4fa613" name="sotre-data-mongodb-reduce-money-in-banks-subflow" />
-                    </async>
-                    <flow-ref doc:name="find-accounts-subflow" doc:id="ce12fa9e-8603-44b9-9858-2e03eb155add" name="sotre-data-mongodb-find-accounts-subflow"/>
                     <flow-ref doc:name="create-wallet-subflow" doc:id="363b72d7-219c-4140-bc3f-cff84a2ca768" name="sotre-data-mongodb-create-wallet-subflow"/>
                     <ee:transform doc:name="Final Message" doc:id="fac370f1-ad3a-4365-9e7b-892dc0a6c1c0">
                       <ee:message>

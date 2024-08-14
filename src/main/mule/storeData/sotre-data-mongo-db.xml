@@ -12,6 +12,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
   <sub-flow
     name="sotre-data-mongodb-get-user-by-sender-subflow"
     doc:id="851cd5ce-0ef5-4602-ae85-88a9ef200cc6">
+    <set-variable value="Encontrar usuario registrado anteriormente" doc:name="Set Action" doc:id="2195a181-1973-4f3b-b672-a0cdbc1994fe" variableName="actionDb"/>
     <ee:transform
       doc:name="Transform Message"
       doc:id="3b0f5172-1e3b-47e3-811e-59a1a20a0b4d">
@@ -37,10 +38,12 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       doc:name="Set User"
       doc:id="87cb8775-6433-4d05-a642-646d21faa412"
       variableName="user" />
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="184d8678-85de-4d56-b2cb-dff8a4815c32" name="implement-mongodb-general-logging-subflow"/>
   </sub-flow>
   <sub-flow
     name="sotre-data-mongodb-get-message-info-unregister-subflow"
     doc:id="7b3d8b19-cf9d-48e6-b06d-71d28e97ba72">
+    <set-variable value="Encontrar mensaje de usuario no registrado" doc:name="Set Action" doc:id="7c05bf98-0c36-46c3-9976-44487c3c49c5" variableName="actionDb" />
     <ee:transform
       doc:name="Transform Message"
       doc:id="31b6d784-efa8-4c9c-a06a-e6a6968885a5">
@@ -59,8 +62,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
     <set-payload value="#[payload[0].values]" doc:name="Set Payload" doc:id="18b9dfda-c9b1-475d-88ac-5d25a579d0b0" />
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="2238493b-59aa-4d44-ae2d-06bd1bc0bc16" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-get-message-info-subflow" doc:id="8a78df15-b195-4f07-927f-60cc1384f54f">
+    <set-variable value="Encontrar mensaje de usuario registrado" doc:name="Set Action" doc:id="2ba4978c-b16b-482f-81e1-e8dfd697f66a" variableName="actionDb" />
     <ee:transform doc:name="Transform Message" doc:id="bee8c800-ce55-4d02-8686-3fdea6cebd42" >
       <ee:message >
         <ee:set-payload resource="scripts/query/get-message-info-register-query.dwl" />
@@ -71,8 +76,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
       <mongo:sort-by><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
     <set-payload value="#[payload[0].values]" doc:name="Set Payload" doc:id="87f156a1-16aa-4fac-9dcf-50c9d7e1a60c" />
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="f3cb9ac2-05e9-4e02-ae4a-906937c585e1" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-add-user-subflow" doc:id="12e3e047-d216-41e1-89d0-b630b59f7ab5" >
+    <set-variable value="Registrar usuario nuevo" doc:name="Set Action" doc:id="4ad97c4c-ef6b-4dd1-9181-bd54f95c65f9" variableName="actionDb" />
     <ee:transform doc:name="Transform Message" doc:id="428eb969-7f3b-4913-9ca8-9dd2d66bc94f" >
       <ee:message >
       </ee:message>
@@ -83,8 +90,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <mongo:insert-document doc:name="Insert User" doc:id="6564906e-882c-45d7-ae90-c72daae6c751" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.users}">
       <mongo:document ><![CDATA[#[vars.query default []]]]></mongo:document>
     </mongo:insert-document>
+    <set-variable value="#[payload]" doc:name="Set user" doc:id="04a27ae7-58d6-4871-9d78-30ea90085b7f" variableName="user"/>
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="10af7e4f-f4b9-41d8-8433-9e7259e480e9" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-create-accounts-subflow" doc:id="c0230198-47f1-4428-946f-4084f915dc5a">
+    <set-variable value="Crear cuenta bancaria de usuario" doc:name="Set Action" doc:id="8fa49d3f-354f-4fb0-8c80-9de1e148e77c" variableName="actionDb" />
     <ee:transform doc:name="Transform Message" doc:id="2efb562c-76cb-4276-ab14-668bbcb2760d" >
       <ee:message >
       </ee:message>
@@ -95,8 +105,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <mongo:insert-documents doc:name="Insert Accounts" doc:id="517b28ed-1a91-4978-a741-87e464233e8c" config-ref="MongoDB_Config" collectionName="${mongodb.databases.finance.collections.accounts}">
       <mongo:documents ><![CDATA[#[vars.accounts default []]]]></mongo:documents>
     </mongo:insert-documents>
+    <set-variable value="#[payload]" doc:name="Set Accounts" doc:id="6afceef0-ba6c-45bc-a454-7398e5ee2a49" variableName="accounts"/>
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="b3ea0e27-585b-4cf3-a462-d8dc26880fcc" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-find-accounts-subflow" doc:id="393b4d5d-62a4-4e0b-8162-b46e73e35c8d" >
+    <set-variable value="Encontrar las cuentas de un usuario por el valor del campo sender" doc:name="Set Action" doc:id="dc3b1874-7363-4e0b-9a44-1a8e6faa2fcb" variableName="actionDb" />
     <ee:transform doc:name="Transform Message" doc:id="5a95b750-0981-4b3a-937b-1c1318446589" >
       <ee:message >
       </ee:message>
@@ -114,8 +127,10 @@ output application/json
       <mongo:sort-by ><![CDATA[#[vars.sort default []]]]></mongo:sort-by>
     </mongo:find-documents>
     <set-variable value="#[payload]" doc:name="Set Accounts Found" doc:id="dca9f50d-6d95-41ea-bdb1-5734abcbffff" variableName="accountsFound"/>
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="5a34a7e0-b053-49b4-95c8-6886158d721c" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-reduce-money-in-banks-subflow" doc:id="2183e6dd-d141-453d-a29d-a9acb2f3c09b">
+    <set-variable value="Restar el importe sacado de los bancos" doc:name="Set Action" doc:id="49b46130-5884-46f9-8fd9-d4ace003cc05" variableName="actionDb" />
     <foreach doc:name="Accounts - For Each" doc:id="0a863106-af42-4a9c-8590-d778a5c82d81" collection="#[vars.accounts default []]">
       <set-variable value="#[payload]" doc:name="Set Account" doc:id="1a4423bc-c1fa-4742-9e55-7c700f4a7e58" variableName="account"/>
       <foreach doc:name="Money - For Each" doc:id="85503054-e525-4bf4-b36a-6005174b95d4" collection="#[payload.money default []]">
@@ -146,10 +161,12 @@ output application/json
       <mongo:query><![CDATA[#[vars.query default []]]]></mongo:query>
       <mongo:content-to-update><![CDATA[#[vars.contentToUpdate default []]]]></mongo:content-to-update>
     </mongo:update-documents>
+        <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="ada017a7-5354-4cc5-a175-49f0397674a4" name="implement-mongodb-general-logging-subflow" />
       </foreach>
     </foreach>
   </sub-flow>
   <sub-flow name="sotre-data-mongodb-create-wallet-subflow" doc:id="b894920b-58cd-44a1-886f-c89db2fb54a2" >
+    <set-variable value="Crear wallet" doc:name="Set Action" doc:id="08a1c209-de96-4b33-811d-6a2c5e6b0b0e" variableName="actionDb" />
     <ee:transform doc:name="Transform Message" doc:id="c50f0966-5936-4e31-b7bf-ea25759f3468">
       <ee:message>
         <ee:set-payload><![CDATA[%dw 2.0
@@ -168,5 +185,6 @@ output application/json
     <mongo:insert-document collectionName="${mongodb.databases.finance.collections.wallet}" doc:name="Insert Wallet" doc:id="6acf3278-78c6-474d-a60f-e4732a8b189f" config-ref="MongoDB_Config" >
       <mongo:document ><![CDATA[#[vars.query default []]]]></mongo:document>
     </mongo:insert-document>
+    <flow-ref doc:name="mongodb-general-logging-subflow" doc:id="a41b1ea0-6d78-4d7d-8242-3d9e0f0cad03" name="implement-mongodb-general-logging-subflow" />
   </sub-flow>
 </mule>

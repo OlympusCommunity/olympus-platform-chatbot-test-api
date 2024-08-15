@@ -76,16 +76,16 @@ var message = payload.query.message as String default ""
 if ( sizeOf(message splitBy (" ")) <= 2)
 	(
 		{
-			command: upper((message splitBy (" "))[1]),
-            total: sizeOf(message splitBy (" "))
+			command: upper((message splitBy (" "))[1]) default "",
+            total: sizeOf(message splitBy (" ")) default 0
 		}
 	)
 else 
 	(
 		{
-			command: upper((message splitBy (" "))[1]),
-			userData: upper((message splitBy (" "))[2]),
-            total: sizeOf(message splitBy (" "))
+			command: upper((message splitBy (" "))[1]) default "",
+			userData: upper((message splitBy (" "))[2]) default "",
+            total: sizeOf(message splitBy (" ")) default 0
 		}
 	)
 ]]></ee:set-variable>

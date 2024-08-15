@@ -246,22 +246,10 @@ Bienvenido a Olympus Finance, se ha creado su cuenta de forma exitosa, le damos 
           <when expression="#[isEmpty(vars.user) or null == vars.user]" >
             <flow-ref doc:name="get-message-info-unregister-subflow" doc:id="d336448d-45af-4317-a3bb-0eb77b7f95aa" name="sotre-data-mongodb-get-message-info-unregister-subflow" />
           </when>
-          <otherwise >
-            <ee:transform doc:name="Command incorrect Message" doc:id="78fde7ad-6b2f-49d1-85d1-ba115d856bb5" >
+          <otherwise>
+            <ee:transform doc:name="Info Message" doc:id="2b1ddb74-c5f2-47c2-ae42-a430ef5150f4" >
               <ee:message >
-                <ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	replies: [
-		{
-			message: "*INFORMACION* Bienvenido a las finanzas en Olympus"
-		},
-		{
-			message: "El comando " ++ vars.message as String default "" ++ " no existe en este bot."
-		}
-	]
-}]]></ee:set-payload>
+                <ee:set-payload resource="scripts/messages/finance-info-message.dwl" />
               </ee:message>
             </ee:transform>
           </otherwise>
@@ -289,7 +277,7 @@ output application/json
 			message: "*INFORMACION* Bienvenido a las finanzas en Olympus"
 		},
 		{
-			message: "El comando " ++ vars.message as String default "" ++ " no existe en este bot."
+			message: "Has usado un comando que no existe en este bot."
 		}
 	]
 }]]></ee:set-payload>
